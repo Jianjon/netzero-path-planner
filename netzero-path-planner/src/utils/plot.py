@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import plotly.graph_objects as go
 
 def plot_emissions(years, emissions, labels=None):
     """
@@ -45,38 +46,69 @@ def compare_emissions(years, emissions_list, labels=None):
     plt.tight_layout()
     plt.show()
 
-def plot_emission_path(df):
-    fig, ax = plt.subplots(figsize=(12, 6))
-    
-    # 繪製主要區域圖
-    ax.fill_between(df['年度'], df['合併排放'], 
-                   color='#1f77b4', alpha=0.3, 
-                   label='排放量')
-    
-    # 繪製邊界線
-    ax.plot(df['年度'], df['合併排放'], 
-            color='#1f77b4', linewidth=2)
-    
-    # 設定圖表樣式
-    ax.set_xlabel('年份')
-    ax.set_ylabel('排放量 (tCO₂e)')
-    ax.grid(True, linestyle='--', alpha=0.7)
-    
-    # 加入標註
-    max_year = df['年度'].max()
-    max_emission = df['合併排放'].iloc[0]
-    
-    # 加入文字標籤
-    ax.text(df['年度'].iloc[0], max_emission*1.1, 
-            'Near-term Targets', 
-            fontsize=10)
-    ax.text(2035, max_emission*0.6, 
-            'Emission Reduction\nPathway', 
-            fontsize=10)
-    ax.text(max_year-5, max_emission*0.2, 
-            'Neutralization', 
-            fontsize=10, color='green')
-    
-    plt.title('減碳路徑規劃', pad=20)
-    
+def plot_emission_path(df, use_plotly=True, short_years=3, mid_years=7, baseline_year=2020):
+    if use_plotly:
+        # 主線：淡藍色，連續
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=df["年度"], y=df["合併排放"],
+            mode="lines+markers",
+            fill="tozeroy",
+            name="碳排放路徑",
+            line=dict(color="#7ec8e3", width=3),
+            fillcolor="rgba(126,200,227,0.2)"
+        ))
+        # 標註重點時間點
+        short_end = baseline_year + short_years
+        mid_end = short_end + mid_years
+        long_end = 2050
+        for year, label, color in zip(
+            [short_end, mid_end, long_end],
+            ["近期結束", "中期結束", "2050目標"],
+            ["#ffb347", "#ffb347", "#ff6961"]):
+            yval = df[df['年度'] == year]['合併排放'].values[0]
+            fig.add_trace(go.Scatter(
+                x=[year], y=[yval],
+                mode="markers+text",
+                marker=dict(size=12, color=color),
+                text=[f"{label}<br>{int(yval)}"],
+                textposition="top center",
+                showlegend=False
+            ))
+        fig.update_layout(
+            title="碳排放路徑模擬",
+            xaxis_title="年度",
+            yaxis_title="排放量（tCO₂e）",
+            template="plotly_white",
+            xaxis=dict(range=[df["年度"].min(), 2060]),
+            showlegend=False
+        )
+        return fig
+    else:
+        fig, ax = plt.subplots(figsize=(10, 5))
+        ax.plot(df["年度"], df["合併排放"], color="#7ec8e3", linewidth=2, label="合併排放量")
+        ax.fill_between(df["年度"], df["合併排放"], color="#7ec8e3", alpha=0.2)
+        ax.set_title("碳排放路徑模擬", fontsize=16)
+        ax.set_xlabel("年度", fontsize=12)
+        ax.set_ylabel("排放量（tCO₂e）", fontsize=12)
+        ax.grid(True, linestyle='--', alpha=0.4)
+        ax.set_xlim(df["年度"].min(), 2060)
+        return fig
+
+def plot_emission_path_simple(df):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=df["年度"], y=df["合併排放"],
+        mode="lines+markers",
+        fill="tozeroy",
+        name="合併排放",
+        line=dict(color="royalblue", width=3)
+    ))
+    fig.update_layout(
+        title="碳排放路徑模擬",
+        xaxis_title="年度",
+        yaxis_title="排放量（tCO₂e）",
+        template="plotly_white",
+        xaxis=dict(range=[df["年度"].min(), 2060])
+    )
     return fig
