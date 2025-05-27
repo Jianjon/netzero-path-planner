@@ -157,11 +157,7 @@ def main():
         st.markdown("---")
         if st.button("🚀 開始模擬", use_container_width=True):
             st.session_state["page"] = "tool"
-
-        st.markdown("---")
-        st.markdown("#### 聯絡資訊")
-        st.markdown("📬 Jon｜Email: jonchang1980@gmail.com ｜ [LinkedIn](https://www.linkedin.com/in/chang-jon-293a72326/) ｜ LINE ID: jianjon")
-        st.caption("本工具為 ESG 減碳教育用途，不作為法定查驗依據")
+            st.rerun()
         return
     # 內頁主標題同步風格
     st.markdown(f"""
@@ -239,7 +235,6 @@ def main():
         if re100_enable and st.session_state['show_re100_desc']:
             with st.expander("什麼是 RE100？", expanded=True):
                 st.markdown(RE100_DESCRIPTION)
-        st.subheader("2050年殘留排放比例")
         st.markdown("---")
         st.subheader("近期設定（Short-term）")
         short_years = st.slider("近期年數", min_value=3, max_value=5, value=3)
@@ -405,33 +400,8 @@ def main():
                         formatted_df.set_index("年度")[["合併排放", "減碳量", "減碳百分比", "累積減碳量", "相對基準年減碳%"]], 
                         use_container_width=True
                     )
-                    # 進階解釋（根據選項顯示對應說明，且只顯示一次）
-                    if model == "SBTi 1.5°C":
-                        if calc_method == "線性（每年減固定量）":
-                            st.markdown(f"""
-                            <div style='background:{CARD_BG};padding:18px 24px;border-radius:8px;color:{TEXT_COLOR};font-size:16px;margin:18px 0;'>
-                            <b>您選擇的是線性減碳路徑</b>，每年減少固定的排放量，適合有明確年度減碳計畫的企業。<span style='color:{SUBTEXT_COLOR}'>此路徑早期減碳壓力較大，後期壓力較小。</span>
-                            </div>
-                            """, unsafe_allow_html=True)
-                        else:
-                            st.markdown(f"""
-                            <div style='background:{CARD_BG};padding:18px 24px;border-radius:8px;color:{TEXT_COLOR};font-size:16px;margin:18px 0;'>
-                            <b>您選擇的是等比減碳路徑</b>，每年減少固定百分比，適合技術進步或政策逐步加嚴的情境。<span style='color:{SUBTEXT_COLOR}'>此路徑早期壓力較小，後期壓力較大。</span>
-                            </div>
-                            """, unsafe_allow_html=True)
-                    else:
-                        st.markdown(f"""
-                        <div style='background:{CARD_BG};padding:18px 24px;border-radius:8px;color:{TEXT_COLOR};font-size:16px;margin:18px 0;'>
-                        <b>您選擇的是線性減碳路徑</b>，每年減少固定的排放量，適合有明確年度減碳計畫的企業。<span style='color:{SUBTEXT_COLOR}'>此路徑早期減碳壓力較大，後期較小。</span>
-                        </div>
-                        """, unsafe_allow_html=True)
-                else:
-                    st.dataframe(
-                        formatted_df.set_index("年度")[["合併排放", "減碳量", "減碳百分比"]], 
-                        use_container_width=True
-                    )
                 st.download_button("📥 下載CSV", df.to_csv(index=False), file_name="carbon_path.csv")
-                st.markdown("<div style='font-size:13px;color:#888;margin-top:8px;'>此路徑模擬由 Path2Zero 工具產出，若需客製化路徑規劃、顧問協助或報告撰寫指導，歡迎聯絡我：your@email.com</div>", unsafe_allow_html=True)
+                st.markdown("<div style='font-size:13px;color:#888;margin-top:8px;'>此路徑模擬由 Path2Zero 工具產出，若需客製化路徑規劃、顧問協助或報告撰寫指導，歡迎聯絡我：jonchang1980@gmail.com</div>", unsafe_allow_html=True)
                 if st.button("儲存設定"):
                     config = {
                         "baseline_year": baseline_year,
@@ -506,18 +476,8 @@ def main():
                         formatted_df.set_index("年度")["合併排放 減碳量 減碳百分比 累積減碳量 相對基準年減碳%".split()], 
                         use_container_width=True
                     )
-                    st.markdown(f"""
-                    <div style='background:{CARD_BG};padding:18px 24px;border-radius:8px;color:{TEXT_COLOR};font-size:16px;margin:18px 0;'>
-                    <b>您選擇的是線性減碳路徑</b>，每年減少固定的排放量，適合有明確年度減碳計畫的企業。<span style='color:{SUBTEXT_COLOR}'>此路徑早期減碳壓力較大，後期較小。</span>
-                    </div>
-                    """, unsafe_allow_html=True)
-                else:
-                    st.dataframe(
-                        formatted_df.set_index("年度")["合併排放 減碳量 減碳百分比".split()], 
-                        use_container_width=True
-                    )
                 st.download_button("📥 下載CSV", df.to_csv(index=False), file_name="taiwan_carbon_path.csv")
-                st.markdown("<div style='font-size:13px;color:#888;margin-top:8px;'>此路徑模擬由 Path2Zero 工具產出，若需客製化路徑規劃、顧問協助或報告撰寫指導，歡迎聯絡我：your@email.com</div>", unsafe_allow_html=True)
+                st.markdown("<div style='font-size:13px;color:#888;margin-top:8px;'>此路徑模擬由 Path2Zero 工具產出，若需客製化路徑規劃、顧問協助或報告撰寫指導，歡迎聯絡我：jonchang1980@gmail.com</div>", unsafe_allow_html=True)
                 if st.button("儲存設定"):
                     config = {
                         "baseline_year": baseline_year,
